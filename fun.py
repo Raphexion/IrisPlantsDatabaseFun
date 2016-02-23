@@ -2,6 +2,9 @@ import urllib2
 import logging
 import StringIO
 import csv
+import plot_help
+import pylab
+
 
 base_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris"
 
@@ -67,9 +70,17 @@ def decode_attributes(data):
             for (a, b, c, d, e) in data ]
 
 
-def main():
-    data = bind('iris.data', download, de_cvs, decode_attributes)
+data = bind('iris.data', download, de_cvs, decode_attributes)
+keys = data[0].keys()
+keys.remove('class')
+print keys
+labels = map(lambda key: key.replace('_', ' ').capitalize(), keys)
 
+fig, ((ax1, ax2), (ax3, ax4)) = pylab.subplots(2, 2)
+axs = (ax1, ax2, ax3, ax4)
 
-if __name__ == '__main__':
-    main()
+plot_help.plot_keys(axs, keys, labels, data)
+
+fig.suptitle('Fun with Iris Plant Database', fontsize=14)
+fig.set_size_inches([30, 10])
+pylab.savefig('fun_with_iris.png')
